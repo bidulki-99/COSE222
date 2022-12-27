@@ -13,6 +13,11 @@ module controller(
         oMemWrite = 1'b0;
         aluop = 2'b00;
       end
+      6'b101011: begin
+      	oRegWrite = 1'b0;
+        oMemWrite = 1'b1;
+        aluop = 2'b00;
+      end
       default: begin
         oRegWrite = 1'b0;
         oMemWrite = 1'b0;
