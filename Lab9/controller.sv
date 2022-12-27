@@ -1,8 +1,10 @@
 module controller(
   input logic [5:0] iOp,
+  input logic [5:0] func,
   output logic oRegWrite,
   output logic oMemWrite,
-  output logic [2:0] oALUControl
+  output logic [2:0] oALUControl,
+  output logic RegDst, ALUSrc, MemtoReg
 );
   logic [1:0] aluop;
   
@@ -12,24 +14,53 @@ module controller(
         oRegWrite = 1'b1;
         oMemWrite = 1'b0;
         aluop = 2'b00;
+        RegDst = 1'b0;
+        ALUSrc = 1'b1;
+        MemtoReg = 1'b1;
       end
+      
       6'b101011: begin
         oRegWrite = 1'b0;
         oMemWrite = 1'b1;
         aluop = 2'b00;
+        RegDst = 1'b0;
+        ALUSrc = 1'b1;
+        MemtoReg = 1'b0;
       end
+      
+      6'b000000: begin
+      	oRegWrite = 1'b1;
+        oMemWrite = 1'b0;
+        aluop = 2'b10;
+        RegDst = 1'b1;
+        ALUSrc = 1'b0;
+        MemtoReg = 1'b0;
+      end
+      
       default: begin
         oRegWrite = 1'b0;
         oMemWrite = 1'b0;
         aluop = 2'b00;
+        RegDst = 1'b0;
+        ALUSrc = 1'b0;
+        MemtoReg = 1'b0;
       end
     endcase
   
   always_comb
     case(aluop)
       2'b00: oALUControl = 3'b010;
+      
+      2'b10:
+        case(func)
+          6'b100000: oALUControl = 3'b010;
+          6'b100010: oALUControl = 3'b110;
+          6'b100100: oALUControl = 3'b000;
+          6'b100101: oALUControl = 3'b001;
+          6'b101010: oALUControl = 3'b111;
+          default: oALUControl = 3'b000;
+        endcase
+      
       default: oALUControl = 3'b000;
     endcase
 endmodule
- 
-  
